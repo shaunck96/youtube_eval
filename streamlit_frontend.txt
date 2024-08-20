@@ -1,0 +1,40 @@
+st.title("YouTics")
+
+st.subheader("Enter the URL of the Youtube Video")
+# Text input for URL
+user_input_url = st.text_input("Enter the URL of the Youtube Video")
+
+# Button to process the URL
+if st.button('Process URL'):
+    # Process the URL
+    st.write("Processing the URL")
+    Image.open(r'./RI_swody3.png')
+    trending_by_category = YoutubeVideoAIStatExtractor(url=user_input_url).youtube_video_eval_trigger()
+    topics = trending_by_category[0]
+    sentiment = trending_by_category[1]
+    path_to_thumbnail = trending_by_category[2]
+    # Display the topics
+    st.subheader("Theme: ")
+    st.write(trending_by_category[0]['theme'].iloc[0])
+    st.subheader("Introduction: ")
+    st.write(trending_by_category[0]['introduction'].iloc[0])
+    st.subheader("Conclusion: ")
+    st.write(trending_by_category[0]['conclusion'].iloc[0])
+    st.subheader("Topic_of_discussion: ")
+    st.write(trending_by_category[0]['topic_of_discussion'].iloc[0])
+    st.subheader("Category: ")
+    st.write(trending_by_category[0]['category'].iloc[0])
+    st.subheader("Number of Speakers: ")
+    st.write(trending_by_category[0]['num_of_speakers'].iloc[0])
+    st.subheader("Keywords: ")
+    st.write(trending_by_category[0]['keywords'].iloc[0])
+    st.subheader("Video Type: ")
+    st.write(trending_by_category[0]['video_type'].iloc[0])
+    st.subheader("Summary: ")
+    st.write(trending_by_category[0]['video_type'].iloc[0])
+    st.subheader("Tone: ")
+    st.write(trending_by_category[0]['video_type'].iloc[0])
+    st.subheader("Number of Scenes: ")
+    st.write(trending_by_category[0]['num_of_scenes'].iloc[0])
+    st.subheader("Sentiment Info: ")
+    trending_by_category[1]['sentiment_topics'].loc[0]
