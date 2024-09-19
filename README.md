@@ -1,8 +1,4 @@
-# youtube_eval
-
-# LFFC Strategy Optimization Report with Mathematical Formulation
-
-[Previous content remains the same]
+# LFFC Strategy Optimization Report with Corrected Mathematical Formulation
 
 ## 9. Mathematical Formulation
 
@@ -41,42 +37,58 @@ Where:
   - $s_i$ is the block size (percentage)
   - $m_i$ is the start month
 
-9.3 Objective Functions
+### 9.3 Objective Functions
 
-Average Price:
-$$f_1(\mathbf{x}) = \frac{1}{T} \sum_{t=1}^T P_t(\mathbf{x})$$
-where $T$ is the total number of months in the simulation, and $P_t(\mathbf{x})$ is the price in month $t$ given strategy $\mathbf{x}$.
-Conditional Value at Risk (CVaR):
-$$f_2(\mathbf{x}) = \text{CVaR}\alpha(P(\mathbf{x})) = \mathbb{E}[P(\mathbf{x}) | P(\mathbf{x}) \geq \text{VaR}\alpha(P(\mathbf{x}))]$$
-where $\alpha$ is the confidence level (e.g., 95%), and $\text{VaR}_\alpha$ is the Value at Risk.
+1. Average Price:
 
-9.4 Constraints
+   $$f_1(\mathbf{x}) = \frac{1}{T} \sum_{t=1}^T P_t(\mathbf{x})$$
 
-Total block size:
-$$g_1(\mathbf{x}) = |\sum_{i=1}^{N_s} s_i b_i - 100| - 5 \leq 0$$
-Minimum block size:
-$$g_2(\mathbf{x}) = 5 - \min_{i} s_i \leq 0$$
-Maximum strip duration:
-$$g_3(\mathbf{x}) = \max_{i} d_i - 24 \leq 0$$
-Maximum lead time:
-$$g_4(\mathbf{x}) = \max_{i} l_i - 18 \leq 0$$
+   where $T$ is the total number of months in the simulation, and $P_t(\mathbf{x})$ is the price in month $t$ given strategy $\mathbf{x}$.
 
-9.5 Genetic Algorithm Operators
+2. Conditional Value at Risk (CVaR):
 
-Crossover (Two-point crossover):
-For parents $\mathbf{p}_1$ and $\mathbf{p}_2$, and randomly chosen crossover points $c_1 < c_2$:
-$$\mathbf{o}_1 = (\mathbf{p}_1[1:c_1], \mathbf{p}_2[c_1:c_2], \mathbf{p}_1[c_2:])$$
-$$\mathbf{o}_2 = (\mathbf{p}_2[1:c_1], \mathbf{p}_1[c_1:c_2], \mathbf{p}_2[c_2:])$$
-Mutation:
-For each gene $x_i$ in individual $\mathbf{x}$:
-$$
-x_i' =
-\begin{cases}
-x_i + \mathcal{N}(0, \sigma_i), & \text{with probability } p_m \
-x_i, & \text{otherwise}
-\end{cases}
-$$
-where $\sigma_i$ is the step size for the $i$-th parameter, and $p_m$ is the mutation probability.
+   $$f_2(\mathbf{x}) = \text{CVaR}_\alpha(P(\mathbf{x})) = \mathbb{E}[P(\mathbf{x}) | P(\mathbf{x}) \geq \text{VaR}_\alpha(P(\mathbf{x}))]$$
+
+   where $\alpha$ is the confidence level (e.g., 95%), and $\text{VaR}_\alpha$ is the Value at Risk.
+
+### 9.4 Constraints
+
+1. Total block size:
+
+   $$g_1(\mathbf{x}) = |\sum_{i=1}^{N_s} s_i b_i - 100| - 5 \leq 0$$
+
+2. Minimum block size:
+
+   $$g_2(\mathbf{x}) = 5 - \min_{i} s_i \leq 0$$
+
+3. Maximum strip duration:
+
+   $$g_3(\mathbf{x}) = \max_{i} d_i - 24 \leq 0$$
+
+4. Maximum lead time:
+
+   $$g_4(\mathbf{x}) = \max_{i} l_i - 18 \leq 0$$
+
+### 9.5 Genetic Algorithm Operators
+
+1. Crossover (Two-point crossover):
+   For parents $\mathbf{p}_1$ and $\mathbf{p}_2$, and randomly chosen crossover points $c_1 < c_2$:
+
+   $$\mathbf{o}_1 = (\mathbf{p}_1[1:c_1], \mathbf{p}_2[c_1:c_2], \mathbf{p}_1[c_2:])$$
+   $$\mathbf{o}_2 = (\mathbf{p}_2[1:c_1], \mathbf{p}_1[c_1:c_2], \mathbf{p}_2[c_2:])$$
+
+2. Mutation:
+   For each gene $x_i$ in individual $\mathbf{x}$:
+
+   $$
+   x_i' = 
+   \begin{cases} 
+   x_i + \mathcal{N}(0, \sigma_i), & \text{with probability } p_m \\
+   x_i, & \text{otherwise}
+   \end{cases}
+   $$
+
+   where $\sigma_i$ is the step size for the $i$-th parameter, and $p_m$ is the mutation probability.
 
 ### 9.6 NSGA-II Selection
 
@@ -85,7 +97,9 @@ The NSGA-II algorithm uses non-dominated sorting and crowding distance to select
 1. Non-dominated sorting: Partition the population into fronts $F_1, F_2, \ldots$ where individuals in $F_i$ are not dominated by any individual in $F_j$ for $j > i$.
 
 2. Crowding distance: For individuals $i$ in the same front, calculate:
+
    $$d_i = \sum_{k=1}^2 \frac{f_k(i+1) - f_k(i-1)}{f_k^{max} - f_k^{min}}$$
+
    where $f_k(i)$ is the $k$-th objective value of the $i$-th individual.
 
 3. Selection: Choose individuals based on front ranking and crowding distance.
