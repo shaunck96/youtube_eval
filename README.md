@@ -46,8 +46,8 @@ Where:
    where $T$ is the total number of months in the simulation, and $P_t(\mathbf{x})$ is the price in month $t$ given strategy $\mathbf{x}$.
 
 2. Conditional Value at Risk (CVaR):
-$$f_2(\mathbf{x}) = \text{CVaR}\alpha(P(\mathbf{x})) = \mathbb{E}[P(\mathbf{x}) | P(\mathbf{x}) \geq \text{VaR}\alpha(P(\mathbf{x}))]$$
-where $\alpha$ is the confidence level (e.g., 95%), and $\text{VaR}_\alpha$ is the Value at Risk.
+   $$f_2(\mathbf{x}) = \text{CVaR}\alpha(P(\mathbf{x})) = \mathbb{E}[P(\mathbf{x}) | P(\mathbf{x}) \geq \text{VaR}\alpha(P(\mathbf{x}))]$$
+   where $\alpha$ is the confidence level (e.g., 95%), and $\text{VaR}_\alpha$ is the Value at Risk.
 
 ### 9.4 Constraints
 
@@ -69,58 +69,41 @@ where $\alpha$ is the confidence level (e.g., 95%), and $\text{VaR}_\alpha$ is t
 
 ### 9.5 Genetic Algorithm Operators
 
-Crossover (Two-point crossover):
-For parents $\mathbf{p}_1$ and $\mathbf{p}_2$, and randomly chosen crossover points $c_1 < c_2$:
-$$\mathbf{o}_1 = (\mathbf{p}_1[1:c_1], \mathbf{p}_2[c_1:c_2], \mathbf{p}_1[c_2:])$$
-$$\mathbf{o}_2 = (\mathbf{p}_2[1:c_1], \mathbf{p}_1[c_1:c_2], \mathbf{p}_2[c_2:])$$
-
-Mutation:
-For each gene $x_i$ in individual $\mathbf{x}$:
+#### Crossover (Two-point crossover)
+For parents \(\mathbf{p}_1\) and \(\mathbf{p}_2\), and randomly chosen crossover points \(c_1 < c_2\):
 $$
-x_i' =
-\begin{cases}
-x_i + \mathcal{N}(0, \sigma_i), & \text{with probability } p_m \
-x_i, & \text{otherwise}
-\end{cases}
-$$
-where $\sigma_i$ is the step size for the $i$-th parameter, and $p_m$ is the mutation probability.
-
-### 9.6 NSGA-II Selection
-
-The NSGA-II algorithm uses non-dominated sorting and crowding distance to select individuals:
-
-1. Non-dominated sorting: Partition the population into fronts $F_1, F_2, \ldots$ where individuals in $F_i$ are not dominated by any individual in $F_j$ for $j > i$.
-
-2. Crowding distance: For individuals $i$ in the same front, calculate:
-
-   $$d_i = \sum_{k=1}^2 \frac{f_k(i+1) - f_k(i-1)}{f_k^{max} - f_k^{min}}$$
-
-   where $f_k(i)$ is the $k$-th objective value of the $i$-th individual.
-
-3. Selection: Choose individuals based on front ranking and crowding distance.
-
-### 9.7 Risk Score Calculation
-
-For a given strategy $\mathbf{x}$, the risk score is calculated as:
-
-$$
-\text{RiskScore}(\mathbf{x}) = w_1 \cdot \frac{f_1(\mathbf{x}) - f_1^{min}}{f_1^{max} - f_1^{min}} + w_2 \cdot \frac{f_2(\mathbf{x}) - f_2^{min}}{f_2^{max} - f_2^{min}}
+\begin{align*}
+\mathbf{o}_1 &= (\mathbf{p}_1[1:c_1], \mathbf{p}_2[c_1:c_2], \mathbf{p}_1[c_2:N]) \\
+\mathbf{o}_2 &= (\mathbf{p}_2[1:c_1], \mathbf{p}_1[c_1:c_2], \mathbf{p}_2[c_2:N])
+\end{align*}
 $$
 
-where $w_1$ and $w_2$ are weights (e.g., $w_1 = 0.6$, $w_2 = 0.4$), and $f_k^{min}$ and $f_k^{max}$ are the minimum and maximum values of objective $k$ across all strategies.
+Where \(\mathbf{o}_1\) and \(\mathbf{o}_2\) are the offspring generated from parents \(\mathbf{p}_1\) and \(\mathbf{p}_2\).
 
-## 10. Optimization Algorithm
+#### Mutation
+To introduce variability, a mutation operator can be applied to each offspring. For an offspring \(\mathbf{o}\):
+- Select a random index \(j\) within \(\mathbf{o}\).
+- Modify the value at index \(j\) based on predefined mutation rules (e.g., adjusting the duration, lead time, or block size by a small percentage).
 
-The optimization process can be summarized in the following steps:
+### 9.6 Selection Process
+A selection mechanism, such as tournament selection, can be employed to choose parents for crossover:
+- Randomly select \(k\) individuals from the population.
+- Choose the individual with the best fitness (i.e., lowest \(F(\mathbf{x})\)) among these.
 
-1. Initialize population $P_0$ of size $N$
-2. For generation $t = 1$ to $T$:
-   a. Create offspring population $Q_t$ through crossover and mutation
-   b. Combine parent and offspring: $R_t = P_t \cup Q_t$
-   c. Perform non-dominated sorting on $R_t$ to get fronts $F_1, F_2, \ldots$
-   d. Select new population $P_{t+1}$:
-      - Add fronts $F_1, F_2, \ldots$ until $|P_{t+1}| + |F_i| > N$
-      - Fill remaining slots using crowding distance selection from $F_i$
-3. Return non-dominated solutions from final population $P_T$
+### 9.7 Termination Criteria
+The algorithm can be terminated based on one of the following criteria:
+- A maximum number of generations is reached.
+- A satisfactory fitness level is achieved.
+- The population has converged (i.e., little to no improvement in fitness over several generations).
 
-This mathematical formulation provides a rigorous basis for understanding the LFFC strategy optimization process. It defines the problem structure, objective functions, constraints, and key algorithms used in the genetic algorithm approach.
+### 9.8 Performance Metrics
+To evaluate the performance of the LFFC strategy optimization, the following metrics can be monitored:
+1. Convergence rate of the objective functions \(f_1(\mathbf{x})\) and \(f_2(\mathbf{x})\).
+2. Diversity of the population (to ensure exploration of the solution space).
+3. The best found solution and its robustness against various scenarios.
+
+### 9.9 Implementation
+The optimization can be implemented using a programming language such as Python, leveraging libraries like DEAP (Distributed Evolutionary Algorithms in Python) or PyGMO (Python Global Multiobjective Optimization). 
+
+### Conclusion
+The outlined mathematical formulation and genetic algorithm framework provide a structured approach to optimizing the LFFC strategy, balancing cost efficiency and risk management. Future work could involve testing the framework under real-world conditions and refining the model based on empirical results.
