@@ -46,10 +46,8 @@ Where:
    where $T$ is the total number of months in the simulation, and $P_t(\mathbf{x})$ is the price in month $t$ given strategy $\mathbf{x}$.
 
 2. Conditional Value at Risk (CVaR):
-
-   $$f_2(\mathbf{x}) = \text{CVaR}_\alpha(P(\mathbf{x})) = \mathbb{E}[P(\mathbf{x}) | P(\mathbf{x}) \geq \text{VaR}_\alpha(P(\mathbf{x}))]$$
-
-   where $\alpha$ is the confidence level (e.g., 95%), and $\text{VaR}_\alpha$ is the Value at Risk.
+$$f_2(\mathbf{x}) = \text{CVaR}\alpha(P(\mathbf{x})) = \mathbb{E}[P(\mathbf{x}) | P(\mathbf{x}) \geq \text{VaR}\alpha(P(\mathbf{x}))]$$
+where $\alpha$ is the confidence level (e.g., 95%), and $\text{VaR}_\alpha$ is the Value at Risk.
 
 ### 9.4 Constraints
 
@@ -78,17 +76,15 @@ Where:
    $$\mathbf{o}_2 = (\mathbf{p}_2[1:c_1], \mathbf{p}_1[c_1:c_2], \mathbf{p}_2[c_2:])$$
 
 2. Mutation:
-   For each gene $x_i$ in individual $\mathbf{x}$:
-
-   $$
-   x_i' = 
-   \begin{cases} 
-   x_i + \mathcal{N}(0, \sigma_i), & \text{with probability } p_m \\
-   x_i, & \text{otherwise}
-   \end{cases}
-   $$
-
-   where $\sigma_i$ is the step size for the $i$-th parameter, and $p_m$ is the mutation probability.
+For each gene $x_i$ in individual $\mathbf{x}$:
+$$
+x_i' =
+\begin{cases}
+x_i + \mathcal{N}(0, \sigma_i), & \text{with probability } p_m \
+x_i, & \text{otherwise}
+\end{cases}
+$$
+where $\sigma_i$ is the step size for the $i$-th parameter, and $p_m$ is the mutation probability.
 
 ### 9.6 NSGA-II Selection
 
