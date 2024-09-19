@@ -73,6 +73,7 @@ Crossover (Two-point crossover):
 For parents $\mathbf{p}_1$ and $\mathbf{p}_2$, and randomly chosen crossover points $c_1 < c_2$:
 $$\mathbf{o}_1 = (\mathbf{p}_1[1:c_1], \mathbf{p}_2[c_1:c_2], \mathbf{p}_1[c_2:])$$
 $$\mathbf{o}_2 = (\mathbf{p}_2[1:c_1], \mathbf{p}_1[c_1:c_2], \mathbf{p}_2[c_2:])$$
+
 Mutation:
 For each gene $x_i$ in individual $\mathbf{x}$:
 $$
