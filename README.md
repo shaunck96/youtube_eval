@@ -113,7 +113,7 @@ The NSGA-II selection method is used for multi-objective optimization.
 
 ### 2.3 Simulation-Based Evaluation
 
-The `ElectricityProcurementSimulator` class is used to evaluate strategies. This simulation may include complex market dynamics, temporal dependencies, and stochastic elements not captured in the simple mathematical formulation:
+The `ElectricityProcurementSimulator` class is used to evaluate strategies:
 
 $[f_1(\mathbf{x}), f_2(\mathbf{x})] = \text{ElectricityProcurementSimulator}(\mathbf{x})$
 
