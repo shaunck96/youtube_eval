@@ -129,13 +129,9 @@ $\text{ParetoFront} = \{\mathbf{x} \mid \nexists \mathbf{y} : f_1(\mathbf{y}) \l
 
 Risk scores are calculated for each strategy in the Pareto front using the formula in section 1.5.
 
-### 3.2 Visualization
+### 3.2 Output Visualizations
 
 Two main visualizations are generated:
 
 1. LFFC Strategies Comparison: A scatter plot showing the characteristics of each strip in the top strategies.
 2. Risk vs. Average Price: A scatter plot of average price vs. CVaR for each strategy, color-coded by risk score.
-
-## 4. Conclusion
-
-This optimization approach combines a formal multi-objective optimization problem with practical implementation considerations. The genetic algorithm, enhanced with custom operators and multiple runs, aims to find robust Pareto-optimal solutions. The simulation-based evaluation and post-optimization analysis provide insights beyond what's captured in the mathematical formulation alone.
