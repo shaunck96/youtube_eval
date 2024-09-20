@@ -54,7 +54,8 @@ Let $\mathbf{x} = [x_1, x_2, \ldots, x_{5n+1}]$, where:
    Where $T$ is the total number of time periods, and $P_t(\mathbf{x})$ is the electricity price at time $t$ given strategy $\mathbf{x}$.
 
 2. Conditional Value at Risk (CVaR):
-   $f_2(\mathbf{x}) = \text{CVaR}_\alpha(P(\mathbf{x})) = \mathbb{E}[P(\mathbf{x}) | P(\mathbf{x}) \geq \text{VaR}_\alpha(P(\mathbf{x}))]$
+  $f_2(\mathbf{x}) = \text{CVaR}\alpha(P(\mathbf{x})) = \mathbb{E}[P(\mathbf{x}) \mid P(\mathbf{x}) \geq \text{VaR}\alpha(P(\mathbf{x}))]$
+  Where $\alpha$ is the confidence level (typically 0.95 or 0.99), $P(\mathbf{x})$ is the distribution of electricity prices given strategy $\mathbf{x}$, and $\text{VaR}_\alpha$ is the Value at Risk at confidence level $\alpha$.
 
    Where $\alpha$ is the confidence level (typically 0.95 or 0.99), $P(\mathbf{x})$ is the distribution of electricity prices given strategy $\mathbf{x}$, and $\text{VaR}_\alpha$ is the Value at Risk at confidence level $\alpha$.
 
