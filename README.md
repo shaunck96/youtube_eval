@@ -1,137 +1,158 @@
-# Comprehensive Electricity Procurement Strategy Optimization Report
+# Electricity Procurement Strategy Optimization Process: An In-Depth Report
 
-## 1. Problem Formulation
+## 1. Introduction
 
-### 1.1 Objective Functions
+This report details the optimization process for electricity procurement strategies using a genetic algorithm approach. The goal is to find optimal Long-term Fixed-Price Contract (LFFC) strategies that minimize both the average price and the Conditional Value at Risk (CVaR) of electricity procurement.
+
+## 2. Problem Formulation
+
+The optimization problem can be formulated as follows:
 
 Minimize:
+1. Average Electricity Price
+2. Conditional Value at Risk (CVaR)
 
-1. Average Electricity Price: $f_1(\mathbf{x})$
-2. Conditional Value at Risk (CVaR): $f_2(\mathbf{x})$
+Subject to constraints on:
+- Number of strips (4 ≤ strips ≤ 6)
+- Strip duration (3 ≤ duration ≤ 24 months)
+- Lead time (0 ≤ lead time ≤ 18 months)
+- Number of blocks per strip (2 ≤ blocks ≤ 5)
+- Block size (5% ≤ size ≤ 40%)
+- Start month (1 ≤ month ≤ 12)
 
-Where $\mathbf{x}$ represents the decision variables of the LFFC strategy.
+## 3. Genetic Algorithm Components
 
-### 1.2 Decision Variables
+### 3.1 Individual Representation
 
-Let $\mathbf{x} = [x_1, x_2, \ldots, x_{5n+1}]$, where:
+Each individual in the genetic algorithm represents a complete LFFC strategy. The individual is encoded as a list of floating-point numbers:
 
-- $x_1$: Number of strips $(n)$
-- For each strip $i$ (where $i = 1, 2, \ldots, n$):
-  - $x_{5i-3}$: Strip duration (months)
-  - $x_{5i-2}$: Lead time (months)
-  - $x_{5i-1}$: Number of blocks
-  - $x_{5i}$: Block size (%)
-  - $x_{5i+1}$: Start month
+```
+[num_strips, strip1_duration, strip1_lead_time, strip1_num_blocks, strip1_block_size, strip1_start_month, 
+ strip2_duration, strip2_lead_time, strip2_num_blocks, strip2_block_size, strip2_start_month, ...]
+```
 
-### 1.3 Constraints
+### 3.2 Fitness Function
 
-1. Number of strips:
-   $4 \leq x_1 \leq 6$
+The fitness function evaluates each individual based on two objectives:
 
-2. For each strip $i$ (where $i = 1, 2, \ldots, n$):
-   
-   a. Strip duration:
-      $3 \leq x_{5i-3} \leq 24$
-   
-   b. Lead time:
-      $0 \leq x_{5i-2} \leq 18$
-   
-   c. Number of blocks:
-      $2 \leq x_{5i-1} \leq 5$
-   
-   d. Block size:
-      $5 \leq x_{5i} \leq 40$
-   
-   e. Start month:
-      $1 \leq x_{5i+1} \leq 12$
+1. Average Electricity Price
+2. Conditional Value at Risk (CVaR)
 
-3. Total block size:
-   $\sum_{i=1}^n x_{5i} = 100$
+These objectives are calculated using the `ElectricityProcurementSimulator` class.
 
-### 1.4 Evaluation Functions
+### 3.3 Genetic Operators
 
-1. Average Electricity Price:
-   $f_1(\mathbf{x}) = \frac{1}{T} \sum_{t=1}^T P_t(\mathbf{x})$
+#### 3.3.1 Selection
 
-   Where $T$ is the total number of time periods, and $P_t(\mathbf{x})$ is the electricity price at time $t$ given strategy $\mathbf{x}$.
+The NSGA-II selection method is used, which is designed for multi-objective optimization problems.
 
-2. Conditional Value at Risk (CVaR):
-  $f_2(\mathbf{x}) = \text{CVaR}\alpha(P(\mathbf{x})) = \mathbb{E}[P(\mathbf{x}) \mid P(\mathbf{x}) \geq \text{VaR}\alpha(P(\mathbf{x}))]$
-  Where $\alpha$ is the confidence level (typically 0.95 or 0.99), $P(\mathbf{x})$ is the distribution of electricity prices given strategy $\mathbf{x}$, and $\text{VaR}_\alpha$ is the Value at Risk at confidence level $\alpha$.
+#### 3.3.2 Crossover
 
-### 1.5 Risk Score
+Two-point crossover is employed to create offspring from parent individuals.
 
-The risk score for a strategy $\mathbf{x}$ is calculated as:
+#### 3.3.3 Mutation
 
-$R(\mathbf{x}) = 0.6 \cdot \frac{f_1(\mathbf{x}) - \min_{\mathbf{x}} f_1(\mathbf{x})}{\max_{\mathbf{x}} f_1(\mathbf{x}) - \min_{\mathbf{x}} f_1(\mathbf{x})} + 0.4 \cdot \frac{f_2(\mathbf{x}) - \min_{\mathbf{x}} f_2(\mathbf{x})}{\max_{\mathbf{x}} f_2(\mathbf{x}) - \min_{\mathbf{x}} f_2(\mathbf{x})}$
+A custom mutation operator is implemented that can:
+- Change the number of strips
+- Modify individual strip parameters
 
-Where $\min_{\mathbf{x}}$ and $\max_{\mathbf{x}}$ are taken over all strategies in the population.
+## 4. Optimization Process
 
-### 1.6 Optimization Problem
+### 4.1 Initialization
 
-The multi-objective optimization problem can be formally stated as:
+1. Create an initial population of individuals, each representing a random LFFC strategy.
+2. Evaluate the fitness of each individual using the `evaluate` function.
 
-$\min_{\mathbf{x}} \{f_1(\mathbf{x}), f_2(\mathbf{x})\}$
+### 4.2 Evolution
 
-subject to the constraints listed above.
+For a specified number of generations:
 
-## 2. Implementation Details
+1. Select parents using NSGA-II selection.
+2. Create offspring through crossover and mutation.
+3. Evaluate the fitness of offspring.
+4. Combine parents and offspring.
+5. Select the next generation using NSGA-II selection.
 
-### 2.1 Multiple Optimization Runs
+### 4.3 Multi-Run Optimization
 
 To improve robustness, the optimization process is repeated multiple times:
 
-$\text{Best Strategies} = \bigcup_{i=1}^{N} \text{ParetoFront}(\text{GeneticAlgorithm}_i(\mathbf{x}))$
+1. Run the genetic algorithm optimization `num_runs` times (default: 5).
+2. Collect all non-dominated solutions from each run.
 
-Where $N$ is the number of optimization runs (default: 5), and $\text{ParetoFront}$ selects the non-dominated solutions from each run.
+### 4.4 Risk Score Calculation
 
-### 2.2 Genetic Algorithm Components
+For each strategy, calculate a risk score:
 
-#### 2.2.1 Individual Representation
+```
+risk_score = 0.6 * normalized_avg_price + 0.4 * normalized_cvar
+```
 
-Each individual in the genetic algorithm represents a complete LFFC strategy, encoded as described in the Decision Variables section.
+Where:
+- `normalized_avg_price = (avg_price - min_price) / (max_price - min_price)`
+- `normalized_cvar = (cvar - min_cvar) / (max_cvar - min_cvar)`
 
-#### 2.2.2 Custom Mutation Operator
+## 5. Key Functions
 
-The custom mutation operator can:
-1. Change the number of strips:
-   $x_1' = x_1 + \Delta n$, where $\Delta n \in \{-1, 0, 1\}$
-2. Modify individual strip parameters:
-   $x_i' = x_i + \mathcal{N}(0, \sigma_i)$, where $\sigma_i$ is specific to each parameter type
+### 5.1 Create Individual
 
-#### 2.2.3 Repair Function
+```python
+def create_individual(toolbox: base.Toolbox, max_strips: int) -> List[float]:
+    # Create a random individual with 4 to max_strips strips
+    # Each strip has 5 parameters: duration, lead time, num_blocks, block_size, start_month
+    # Normalize block sizes to sum to 100%
+```
 
-After mutation or crossover, a repair function is applied to ensure constraint satisfaction:
+### 5.2 Evaluate
 
-$\mathbf{x}_\text{repaired} = \text{Repair}(\mathbf{x})$
+```python
+def evaluate(individual: List[float], config: Dict[str, Any]) -> tuple:
+    # Convert individual to LFFC strategy
+    # Run simulation using ElectricityProcurementSimulator
+    # Return (avg_price, cvar)
+```
 
-This function adjusts parameters to meet constraints, particularly normalizing block sizes to sum to 100%.
+### 5.3 Custom Mutate
 
-#### 2.2.4 Selection
+```python
+def custom_mutate(individual: List[float], indpb: float, toolbox: base.Toolbox, max_strips: int) -> tuple:
+    # Potentially change number of strips
+    # Mutate individual parameters with probability indpb
+    # Repair individual to ensure constraints are met
+```
 
-The NSGA-II selection method is used for multi-objective optimization.
+### 5.4 Calculate CVaR
 
-### 2.3 Simulation-Based Evaluation
+```python
+def calculate_cvar(prices: List[float], alpha: float = 0.05) -> float:
+    # Sort prices
+    # Calculate Value at Risk (VaR) at alpha percentile
+    # Calculate mean of prices above VaR
+```
 
-The `ElectricityProcurementSimulator` class is used to evaluate strategies:
-
-$[f_1(\mathbf{x}), f_2(\mathbf{x})] = \text{ElectricityProcurementSimulator}(\mathbf{x})$
-
-### 2.4 Pareto Front Selection
-
-After optimization, the Pareto front of non-dominated solutions is selected:
-
-$\text{ParetoFront} = \{\mathbf{x} \mid \nexists \mathbf{y} : f_1(\mathbf{y}) \leq f_1(\mathbf{x}) \land f_2(\mathbf{y}) \leq f_2(\mathbf{x}) \land (f_1(\mathbf{y}) < f_1(\mathbf{x}) \lor f_2(\mathbf{y}) < f_2(\mathbf{x}))\}$
-
-## 3. Post-Optimization Analysis
-
-### 3.1 Risk Score Calculation
-
-Risk scores are calculated for each strategy in the Pareto front using the formula in section 1.5.
-
-### 3.2 Output Visualizations
+## 6. Visualization
 
 Two main visualizations are generated:
 
-1. LFFC Strategies Comparison: A scatter plot showing the characteristics of each strip in the top strategies.
-2. Risk vs. Average Price: A scatter plot of average price vs. CVaR for each strategy, color-coded by risk score.
+1. LFFC Strategies Comparison
+   - Scatter plot showing start month, strategy number, block size, and duration for each strip
+
+2. Risk vs. Average Price
+   - Scatter plot of average price vs. CVaR for each strategy
+   - Color-coded by risk score
+
+## 7. Output
+
+The optimization process produces:
+
+1. A JSON file containing the top 10 strategies, including:
+   - Strategy details (strips, block sizes, durations, etc.)
+   - Average price
+   - CVaR
+   - Risk score
+
+2. Visualization images saved in the specified output directory
+
+## 8. Conclusion
+
+This optimization process uses a genetic algorithm approach to find Pareto-optimal LFFC strategies that balance the trade-off between average electricity price and risk (CVaR). The multi-run approach and risk score calculation help to identify robust strategies that perform well across multiple objectives.
